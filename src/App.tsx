@@ -1,6 +1,12 @@
 import React from "react";
 
+import { hasBluetooth } from "./bluetooth";
+
 const App: React.FC = () => {
+  if (!hasBluetooth()) {
+    return <div>Bluetooth is not supported :(</div>;
+  }
+
   return (
     <div className="App">
       <header className="App-header">
