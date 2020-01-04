@@ -1,14 +1,15 @@
-import React from "react";
+import React, { FC } from "react";
 
-import { hasBluetooth } from "./bluetooth";
+import { hasBluetooth, connect } from "./bluetooth";
 
-const App: React.FC = () => {
+const App: FC = () => {
   if (!hasBluetooth()) {
     return <div>Bluetooth is not supported :(</div>;
   }
 
   return (
     <div className="App">
+      <button onClick={connect}>Do the thing!</button>
       <header className="App-header">
         <a
           className="App-link"
