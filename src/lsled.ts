@@ -99,27 +99,69 @@ private fun fillWithZeros(length: Int): String {
 }
 */
 
-const packetStart = [0x77, 0x61, 0x6e, 0x67, 0x00, 0x00];
+const packetStart = Uint8Array.of(0x77, 0x61, 0x6e, 0x67, 0x00, 0x00);
 
+export const convertHeader: MessageConverter = messages =>
+  concat(
+    packetStart,
+    convertFlash(messages),
+    convertMarquee(messages),
+    convertOptions(messages),
+    convertSizes(messages),
+    new Uint8Array(6),
+    getTimestamp(),
+    new Uint8Array(4),
+    new Uint8Array(16)
+  );
+
+/*
+fun convert(data: DataToSend, calendar: Calendar = Calendar.getInstance()): List<ByteArray> {
+  check(data.messages.size <= MAX_MESSAGES) { "Max messages=$MAX_MESSAGES" }
+
+  return StringBuilder()
+    .apply {
+      append(PACKET_START)
+      append(getFlash(data))
+      append(getMarquee(data))
+      append(getOptions(data))
+      append(getSizes(data))
+      append("000000000000")
+      append(getTimestamp(calendar))
+      append("00000000")
+      append("00000000000000000000000000000000")
+      append(getMessages(data))
+      append(fillWithZeros(length))
+    }
+    .toString()
+    .chunked(PACKET_BYTE_SIZE * 2)
+    .map { hexStringToByteArray(it) }
+}
+*/
 export const convert: MessageConverter = messages => {
   if (messages.length > MAX_MESSAGES) {
-    throw new Error(`messages.length (${messages.length}) > ${MAX_MESSAGES}`);
+    throw new Error(
+      `messages.length (${messages.length}) > MAX_MESSAGES (${MAX_MESSAGES})`
+    );
   }
+  messages.forEach(({ data }, i) => {
+    if (data.length > MAX_MESSAGE_SIZE) {
+      throw new Error(
+        `messages[${i}].length (${data.length}) > MAX_MESSAGE_SIZE (${MAX_MESSAGE_SIZE})`
+      );
+    }
+  });
 
-  const ret = new Uint8Array(4 * 16);
+  const header = convertHeader(messages);
+  const body = convertMessages(messages);
 
-  for (let i = 0; i < packetStart.length; i++) {
-    ret[i] = packetStart[i];
-  }
+  const currentLength = header.length + body.length;
+  const desiredLength =
+    (currentLength / (PACKET_BYTE_SIZE * 2) + 1) * PACKET_BYTE_SIZE * 2 -
+    currentLength;
 
-  /**
-  proto_header = (
-  0x77, 0x61, 0x6e, 0x67, 0x00, 0x00, 0x00, 0x00, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-  )
-  */
+  const converted = new Uint8Array(desiredLength);
+  converted.set(header, 0);
+  converted.set(body, header.length);
 
-  return ret;
+  return converted;
 };

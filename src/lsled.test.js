@@ -6,7 +6,8 @@ import {
   getTimestamp,
   convertOptions,
   convertSizes,
-  convertMessages
+  convertMessages,
+  convertHeader
 } from "./lsled";
 
 describe("lsled", () => {
@@ -110,6 +111,79 @@ describe("lsled", () => {
       const expected = Uint8Array.of(2, 3, 5, 7, 11, 13, 17, 19);
 
       expect(convertMessages(messages)).toEqual(expected);
+    });
+  });
+
+  describe("convertHeader()", () => {
+    it("should produce a header with the same length as proto_header", () => {
+      const proto_header = Uint8Array.of(
+        0x77,
+        0x61,
+        0x6e,
+        0x67,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x40,
+        0x40,
+        0x40,
+        0x40,
+        0x40,
+        0x40,
+        0x40,
+        0x40,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00
+      );
+
+      expect(convertHeader([]).length).toBe(proto_header.length);
     });
   });
 });
