@@ -4,7 +4,8 @@ import {
   convertFlash,
   convertMarquee,
   getTimestamp,
-  convertOptions
+  convertOptions,
+  convertSizes
 } from "./lsled";
 
 describe("lsled", () => {
@@ -65,6 +66,32 @@ describe("lsled", () => {
       const expected = Uint8Array.of(1, 2, 3, 1, 2, 0, 0, 0);
 
       expect(convertOptions(options)).toEqual(expected);
+    });
+  });
+
+  describe("convertSizes()", () => {
+    it("should convert sizes as expected", () => {
+      const sizes = [{ size: 5 }, { size: 1024 + 512 }, { size: 1024 + 5 }];
+      const expected = Uint8Array.of(
+        0,
+        5,
+        6,
+        0,
+        4,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      );
+
+      expect(convertSizes(sizes)).toEqual(expected);
     });
   });
 });
