@@ -5,7 +5,8 @@ import {
   convertMarquee,
   getTimestamp,
   convertOptions,
-  convertSizes
+  convertSizes,
+  convertMessages
 } from "./lsled";
 
 describe("lsled", () => {
@@ -96,6 +97,19 @@ describe("lsled", () => {
       );
 
       expect(convertSizes(sizes)).toEqual(expected);
+    });
+  });
+
+  describe("convertMessages()", () => {
+    it("should concatenate the given messages", () => {
+      const messages = [
+        { data: Uint8Array.of(2, 3, 5, 7) },
+        { data: new Uint8Array(0) },
+        { data: Uint8Array.of(11, 13, 17, 19) }
+      ];
+      const expected = Uint8Array.of(2, 3, 5, 7, 11, 13, 17, 19);
+
+      expect(convertMessages(messages)).toEqual(expected);
     });
   });
 });

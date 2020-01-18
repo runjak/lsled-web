@@ -5,6 +5,8 @@ import getHour from "date-fns/getHours";
 import getMinute from "date-fns/getMinutes";
 import getSeconds from "date-fns/getSeconds";
 
+import sum from "lodash/sum";
+
 // Heavily inspired by [DataToByteArrayConverter.kt](https://github.com/fossasia/badge-magic-android/blob/master/app/src/main/java/org/fossasia/badgemagic/data/device/DataToByteArrayConverter.kt)
 
 export type Message = {
@@ -76,8 +78,23 @@ export const convertSizes: MessageConverter = messages => {
   return ret;
 };
 
+export const convertMessages: MessageConverter = messages => {
+  const slices = messages.map(({ data }) => data);
+  const ret = new Uint8Array(sum(slices.map(s => s.length)));
+
+  let offset = 0;
+  slices.forEach(slice => {
+    ret.set(slice, offset);
+    offset += slice.length;
+  });
+
+  return ret;
+};
+
 /*
-export const convertMessages: MessageConverter = messages => {};
+private fun fillWithZeros(length: Int): String {
+  return "0".repeat((length / (PACKET_BYTE_SIZE * 2) + 1) * PACKET_BYTE_SIZE * 2 - length)
+}
 */
 
 const packetStart = [0x77, 0x61, 0x6e, 0x67, 0x00, 0x00];
