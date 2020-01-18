@@ -2,9 +2,14 @@
 export const serviceUUID = "0000fee0-0000-1000-8000-00805f9b34fb";
 export const characteristicUUID = "0000fee1-0000-1000-8000-00805f9b34fb";
 
-export const hasBluetooth = (): boolean => {
-  // FIXME use getAvailibillity for increased sanity
-  return navigator.bluetooth !== undefined;
+export const getAvailability = async (): Promise<boolean> => {
+  const bluetooth = navigator.bluetooth;
+
+  if (!bluetooth) {
+    return false;
+  }
+
+  return bluetooth.getAvailability();
 };
 
 export const filters = [{ services: [serviceUUID] }];

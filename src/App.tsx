@@ -1,9 +1,21 @@
-import React, { FC } from "react";
+import React, { FC, useState, useEffect } from "react";
 
-import { hasBluetooth, connect } from "./bluetooth";
+import { getAvailability, connect } from "./bluetooth";
+
+const useHasBluetooth = (): boolean => {
+  const [has, setHas] = useState(false);
+
+  useEffect(() => {
+    getAvailability().then(hasBt => setHas(hasBt));
+  }, [setHas]);
+
+  return has;
+};
 
 const App: FC = () => {
-  if (!hasBluetooth()) {
+  const gotBluetooth = useHasBluetooth();
+
+  if (!gotBluetooth) {
     return <div>Bluetooth is not supported :(</div>;
   }
 
