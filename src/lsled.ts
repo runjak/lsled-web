@@ -12,7 +12,7 @@ export type Message = {
   marquee: boolean;
   mode?: number;
   speed?: number;
-  size: number;
+  data: Uint8Array;
 };
 
 export type MessageConverter = (messages: Array<Message>) => Uint8Array;
@@ -65,8 +65,10 @@ export const convertOptions: MessageConverter = messages => {
 export const convertSizes: MessageConverter = messages => {
   const ret = new Uint8Array(MAX_MESSAGES * 2);
 
-  messages.forEach(({ size }, i) => {
+  messages.forEach(({ data }, i) => {
     const index = i * 2;
+    const size = data.length;
+
     ret[index] = (size >> 8) & 0xff;
     ret[index + 1] = size & 0xff;
   });

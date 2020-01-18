@@ -71,7 +71,11 @@ describe("lsled", () => {
 
   describe("convertSizes()", () => {
     it("should convert sizes as expected", () => {
-      const sizes = [{ size: 5 }, { size: 1024 + 512 }, { size: 1024 + 5 }];
+      const sizes = [
+        { data: new Uint8Array(5) },
+        { data: new Uint8Array(1024 + 512) },
+        { data: new Uint8Array(1024 + 5) }
+      ];
       const expected = Uint8Array.of(
         0,
         5,
