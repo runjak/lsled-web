@@ -10,6 +10,8 @@ import getSeconds from "date-fns/getSeconds";
 export type Message = {
   flash: boolean;
   marquee: boolean;
+  mode?: number;
+  speed?: number;
 };
 
 export type MessageConverter = (messages: Array<Message>) => Uint8Array;
@@ -48,8 +50,17 @@ export const getTimestamp = (createDate = getDate): Uint8Array => {
   );
 };
 
+export const convertOptions: MessageConverter = messages => {
+  const ret = new Uint8Array(MAX_MESSAGES);
+
+  messages.forEach(({ mode = 0, speed = 0 }, index) => {
+    ret[index] = (mode & 0xff) | (speed & 0xff);
+  });
+
+  return ret;
+};
+
 /*
-export const convertOptions: MessageConverter = messages => {};
 export const convertSizes: MessageConverter = messages => {};
 export const convertMessages: MessageConverter = messages => {};
 */
@@ -62,8 +73,6 @@ export const convert: MessageConverter = messages => {
   }
 
   const ret = new Uint8Array(4 * 16);
-
-  ret.fill(0);
 
   for (let i = 0; i < packetStart.length; i++) {
     ret[i] = packetStart[i];

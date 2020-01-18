@@ -3,7 +3,8 @@ import {
   convertFlags,
   convertFlash,
   convertMarquee,
-  getTimestamp
+  getTimestamp,
+  convertOptions
 } from "./lsled";
 
 describe("lsled", () => {
@@ -48,6 +49,22 @@ describe("lsled", () => {
       expect(getTimestamp(() => date)).toEqual(
         Uint8Array.of(49, 10, 3, 7, 33, 25)
       );
+    });
+  });
+
+  describe("convertOptions()", () => {
+    it("should convert options as expected", () => {
+      const options = [
+        { mode: 1 },
+        { speed: 2 },
+        { mode: 1, speed: 2 },
+        { mode: 513 },
+        { speed: 1026 }
+      ];
+
+      const expected = Uint8Array.of(1, 2, 3, 1, 2, 0, 0, 0);
+
+      expect(convertOptions(options)).toEqual(expected);
     });
   });
 });
