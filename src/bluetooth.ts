@@ -1,3 +1,5 @@
+import { Message, PACKET_BYTE_SIZE, convert } from "./lsled";
+
 // UUIDs copied from https://github.com/fossasia/badge-magic-android
 export const serviceUUID = "0000fee0-0000-1000-8000-00805f9b34fb";
 export const characteristicUUID = "0000fee1-0000-1000-8000-00805f9b34fb";
@@ -46,4 +48,22 @@ export const write = async (
 
 export const disconnect = ({ server }: ConnectionInfo) => {
   server.disconnect();
+};
+
+export const uploadMessages = async (
+  messages: Array<Message>
+): Promise<string | undefined> => {
+  try {
+    const connection = await connect();
+
+    if (connection) {
+      await write(connection, convert(messages), PACKET_BYTE_SIZE);
+
+      disconnect(connection);
+    }
+  } catch (error) {
+    console.error("uploadMessages", error);
+  }
+
+  return "Connection failed.";
 };
