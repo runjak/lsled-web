@@ -78,9 +78,8 @@ export const convertSizes: MessageConverter = messages => {
   return ret;
 };
 
-export const convertMessages: MessageConverter = messages => {
-  const slices = messages.map(({ data }) => data);
-  const ret = new Uint8Array(sum(slices.map(s => s.length)));
+export const concat = (...slices: Array<Uint8Array>): Uint8Array => {
+  const ret = new Uint8Array(sum(slices.map(x => x.length)));
 
   let offset = 0;
   slices.forEach(slice => {
@@ -90,6 +89,9 @@ export const convertMessages: MessageConverter = messages => {
 
   return ret;
 };
+
+export const convertMessages: MessageConverter = messages =>
+  concat(...messages.map(({ data }) => data));
 
 /*
 private fun fillWithZeros(length: Int): String {
