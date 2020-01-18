@@ -8,7 +8,8 @@ import {
   convertSizes,
   convertMessages,
   convertHeader,
-  convert
+  convert,
+  PACKET_BYTE_SIZE
 } from "./lsled";
 
 describe("lsled", () => {
@@ -185,6 +186,12 @@ describe("lsled", () => {
       );
 
       expect(convertHeader([]).length).toBe(proto_header.length);
+    });
+  });
+
+  describe("convert()", () => {
+    it("should return a number of bytes that is a multiple of PACKET_BYTE_SIZE", () => {
+      expect(convert([]).length % PACKET_BYTE_SIZE).toBe(0);
     });
   });
 });

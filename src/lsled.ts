@@ -126,11 +126,11 @@ export const convert: MessageConverter = messages => {
   const body = convertMessages(messages);
 
   const currentLength = header.length + body.length;
-  const desiredLength =
+  const additionalLength =
     (currentLength / (PACKET_BYTE_SIZE * 2) + 1) * PACKET_BYTE_SIZE * 2 -
     currentLength;
 
-  const converted = new Uint8Array(desiredLength);
+  const converted = new Uint8Array(currentLength + additionalLength);
   converted.set(header, 0);
   converted.set(body, header.length);
 
