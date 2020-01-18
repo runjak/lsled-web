@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from "react";
 
-import { getAvailability, connect } from "./bluetooth";
+import { getAvailability } from "./bluetooth";
 
 const useHasBluetooth = (): boolean => {
   const [has, setHas] = useState(false);
@@ -19,21 +19,7 @@ const App: FC = () => {
     return <div>Bluetooth is not supported :(</div>;
   }
 
-  return (
-    <div className="App">
-      <button onClick={connect}>Do the thing!</button>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  return <div>Dragons</div>;
 };
 
 export default App;

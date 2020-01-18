@@ -14,35 +14,36 @@ export const getAvailability = async (): Promise<boolean> => {
 
 export const filters = [{ services: [serviceUUID] }];
 
-export const connect = async () => {
+export type ConnectionInfo = {
+  server: BluetoothRemoteGATTServer;
+  service: BluetoothRemoteGATTService;
+  characteristic: BluetoothRemoteGATTCharacteristic;
+};
+
+export const connect = async (): Promise<ConnectionInfo | undefined> => {
   const device = await navigator.bluetooth.requestDevice({ filters });
+  const server = await device.gatt?.connect();
 
-  console.log("found Device:", device.name, device.id, device.gatt?.connected);
-
-  const connection = await device.gatt?.connect();
-
-  if (!connection) {
-    console.log("could not connect :(");
+  if (!server) {
     return;
   }
 
-  const service = await connection.getPrimaryService(serviceUUID);
-
-  console.log("got service:", service.uuid, service.isPrimary);
-
+  const service = await server.getPrimaryService(serviceUUID);
   const characteristic = await service.getCharacteristic(characteristicUUID);
 
-  console.log("got characteristic:", characteristic.uuid);
-
-  connection.disconnect();
+  return { server, service, characteristic };
 };
 
 export const write = async (
-  characteristic: BluetoothRemoteGATTCharacteristic,
+  { characteristic }: ConnectionInfo,
   data: ArrayBuffer,
   chunkSize: number
 ) => {
   for (let offset = 0; offset <= data.byteLength; offset += chunkSize) {
     await characteristic.writeValue(data.slice(offset, offset + chunkSize));
   }
+};
+
+export const disconnect = ({ server }: ConnectionInfo) => {
+  server.disconnect();
 };
