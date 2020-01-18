@@ -1,4 +1,5 @@
 import React, { FC, useState, useEffect } from "react";
+import Alert from "@material-ui/lab/Alert";
 
 import { getAvailability } from "./bluetooth";
 
@@ -16,7 +17,7 @@ const App: FC = () => {
   const gotBluetooth = useHasBluetooth();
 
   if (!gotBluetooth) {
-    return <div>Bluetooth is not supported :(</div>;
+    return <Alert severity="error">Bluetooth is not supported</Alert>;
   }
 
   return <div>Dragons</div>;
