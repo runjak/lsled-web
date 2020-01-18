@@ -1,4 +1,10 @@
-import { convertFlags, convertFlash, convertMarquee } from "./lsled";
+import fromUnixTime from "date-fns/fromUnixTime";
+import {
+  convertFlags,
+  convertFlash,
+  convertMarquee,
+  getTimestamp
+} from "./lsled";
 
 describe("lsled", () => {
   describe("convertFlags()", () => {
@@ -31,6 +37,16 @@ describe("lsled", () => {
     it("should convert marquee flags as expected", () => {
       expect(convertMarquee([{ marquee: false }, { marquee: true }])).toEqual(
         Uint8Array.of(2)
+      );
+    });
+  });
+
+  describe("getTimestamp()", () => {
+    it("should compute the expected timestamp", () => {
+      const date = fromUnixTime(1579357722805);
+
+      expect(getTimestamp(() => date)).toEqual(
+        Uint8Array.of(49, 10, 3, 7, 33, 25)
       );
     });
   });
