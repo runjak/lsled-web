@@ -31,3 +31,13 @@ export const connect = async () => {
 
   connection.disconnect();
 };
+
+export const write = async (
+  characteristic: BluetoothRemoteGATTCharacteristic,
+  data: ArrayBuffer,
+  chunkSize: number
+) => {
+  for (let offset = 0; offset <= data.byteLength; offset += chunkSize) {
+    await characteristic.writeValue(data.slice(offset, offset + chunkSize));
+  }
+};
