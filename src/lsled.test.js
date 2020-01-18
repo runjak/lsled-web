@@ -7,7 +7,8 @@ import {
   convertOptions,
   convertSizes,
   convertMessages,
-  convertHeader
+  convertHeader,
+  convert
 } from "./lsled";
 
 describe("lsled", () => {
