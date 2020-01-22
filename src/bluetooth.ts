@@ -36,6 +36,11 @@ export const connect = async (): Promise<ConnectionInfo | undefined> => {
   return { server, service, characteristic };
 };
 
+const sleep = (ms: number): Promise<void> =>
+  new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+
 export const write = async (
   { characteristic }: ConnectionInfo,
   data: ArrayBuffer,
@@ -43,6 +48,7 @@ export const write = async (
 ) => {
   for (let offset = 0; offset <= data.byteLength; offset += chunkSize) {
     await characteristic.writeValue(data.slice(offset, offset + chunkSize));
+    await sleep(100);
   }
 };
 
